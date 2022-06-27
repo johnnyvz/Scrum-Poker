@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>SCRUM.POKER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon"
+          href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MzMgNTMzIj48cGF0aCBkPSJNNDI1LjggMTgxLjNDMzI1IDEwNi40IDI5MC4zIDQ2LjQgMjY2LjcgMCAyNDMgNDYuNCAyMDguMyAxMDYuNCAxMDcuNSAxODEuM2MtMTcxLjkgMTI3LjgtMTAgMzA2LjEgMTMyLjIgMjA4LTkuMyA2MC45LTQxIDEwNS4zLTczIDEyNC40djE5LjZoMjAwdi0xOS42Yy0zMi4yLTE5LjEtNjMuOC02My41LTczLTEyNC40IDE0Mi4yIDk4LjEgMzA0LTgwLjIgMTMyLjEtMjA4eiIgZmlsbD0iIzAwODVGRiIvPjwvc3ZnPg">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#202124000">
+    <script src="https://cdn.scaledrone.com/scaledrone-lite.min.js"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+            --primary-color: #202020;
+            --hover-num-text-shadow: 0px 0px 0 rgba(255, 255, 255, 0),
+            0px 0px 0 rgba(255, 255, 255, 0),
+            0px 0px 25px #202020,
+            0px 0px 70px #202020,
+            0px 0px 0 rgba(0, 133, 255, 0);
+            --hover-num-text-shadow-start: 0px 0px 0 rgba(255, 255, 255, 0),
+            0px 0px 0 rgba(255, 255, 255, 0),
+            0px 0px 40px #0792fd,
+            0px 0px 90px #0792fd,
+            0px 0px 0 rgba(0, 133, 255, 0);
+            --num-text-shadow: 0px 0px 119px rgba(255, 255, 255, 1.0),
+            0px 0px 137px rgba(255, 255, 255, 1.0),
+            0px 0px 92px #202020,
+            0px 0px 40px #202020,
+            0px 0px 63px rgba(0, 133, 255, 1.0);
+            --num-text-shadow-darker: 0px 0px 108px rgba(255, 255, 255, 0.9),
+            0px 0px 124px rgba(255, 255, 255, 0.9),
+            0px 0px 82px #202020,
+            0px 0px 35px #202020,
+            0px 0px 55px rgba(0, 133, 255, 1.0);
+
+            --aspect-ratio-matrix-width: 5;
+            --aspect-ratio-matrix-height: 3;
+            --aspect-ratio: calc(var(--aspect-ratio-matrix-width) / var(--aspect-ratio-matrix-height));
+
+            --num-font-size: calc(16px + (100 - 16) * ((min(100vw, 100vh * var(--aspect-ratio)) - 300px) / (1400 - 300)));
+
+            --num-color-active: #fff;
+            --num-color-active-darker: #e9effc;
+
+            --btn-text-shadow: 0px 0px 40px #FFFFFF;
+            --not-voted-color: #808080;
+
+            --bg-basic: #202124;
+            --bg-1: #191919;
+        }
+
+        @keyframes numTextShadow {
+            0% {
+                color: var(--num-color-active-darker);
+                text-shadow: var(--num-text-shadow-darker);
+            }
+
+            3% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            55% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            58% {
+                color: var(--num-color-active-darker);
+                text-shadow: var(--num-text-shadow-darker);
+            }
+
+            61% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            85% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            90% {
+                color: var(--num-color-active-darker);
+                text-shadow: var(--num-text-shadow-darker);
+            }
+
+            95% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            97% {
+                color: var(--num-color-active);
+                text-shadow: var(--num-text-shadow);
+            }
+
+            100% {
+                color: var(--num-color-active-darker);
+                text-shadow: var(--num-text-shadow-darker);
+            }
+        }
+
+        @keyframes voteBtnHoverTextShadow {
+            0% {
+                text-shadow: none;
+            }
+            12% {
+                text-shadow: var(--hover-num-text-shadow-start);
+            }
+            100% {
+                text-shadow: var(--hover-num-text-shadow);
+            }
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 400;
+            src: url('poppins.woff2') format('woff2')
+        }
+
+        * {
+            font-family: "Poppins", "HelveticaNeue", Bahnschrift, "Segoe UI", Ubuntu, sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: var(--bg-basic);
+        }
+
+        body:not(.loading) {
+            transition: background-color 1s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .main {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main.is--observer #screen-vote {
+            display: none;
+        }
+
+        .main.is--observer #btn-bet {
+            display: none;
+        }
+
+        .icon-btn {
+            color: #fff;
+            border: none;
+            background: none;
+            font-size: 32px;
+            line-height: 45px;
+            display: flex;
+        }
+
+        .icon-btn:hover span {
+            text-shadow: var(--btn-text-shadow);
+            cursor: pointer;
+        }
+
+        .icon-btn svg {
+            height: 40px;
+            fill: #fff;
+            padding-right: 15px;
+        }
+
+        #vote-btn-wrapper {
+            max-width: 100%;
+            max-height: 100%;
+            padding: 100px;
+            height: calc(100vh - 55px);
+        }
+
+        #vote-btn-list {
+            aspect-ratio: var(--aspect-ratio-matrix-width) / var(--aspect-ratio-matrix-height);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-gap: 6px;
+            max-height: 100%;
+            max-width: 100%;
+            margin: auto auto;
+        }
+
+        #vote-btn-list button {
+            font-size: min(var(--num-font-size), 100px);
+            background: #191919;
+            color: var(--not-voted-color);
+            border: none;
+            outline: none;
+            transition: color .5s ease, text-shadow .3s ease;
+            margin: 0;
+            border-radius: 6px;
+        }
+
+        #vote-btn-list button:hover {
+            color: #1F78FF;
+            cursor: pointer;
+            animation: voteBtnHoverTextShadow .6s ease;
+            text-shadow: var(--hover-num-text-shadow);
+        }
+
+        #vote-btn-list button.is--active {
+            color: #fff;
+            text-shadow: var(--num-text-shadow-darker);
+            transition: text-shadow .2s ease;
+            animation: numTextShadow 2.3s ease .2s infinite;
+            z-index: 1;
+        }
+
+        #vote-btn-list button:hover.is--active {
+            color: #fff;
+        }
+
+        #voter-list {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            height: 55px;
+            flex-basis: 55px;
+            flex-grow: 0;
+            flex-shrink: 0;
+            width: 100%;
+            background: var(--bg-1);
+        }
+
+        .voter-list-item {
+            color: #4C4C4C;
+            transition: all .5s ease;
+        }
+
+        .voter-list-item.has-voted {
+            color: white;
+            text-shadow: 0px 0px 36px rgba(255, 255, 255, 0.66);
+        }
+
+        #name-input {
+            caret-color: var(--primary-color);
+            border: none;
+            border-bottom: 1px solid #4C4C4C;
+            background: transparent;
+            color: #fff;
+            height: 115px;
+            line-height: 115px;
+            font-size: 80px;
+            text-align: center;
+            width: 100%;
+            outline: none;
+        }
+
+        #name-input-label {
+            display: block;
+            font-size: 32px;
+            color: white;
+            opacity: 0.3;
+            text-align: center;
+        }
+
+        #screen-landing .input-container {
+            width: 718px;
+            margin: 0 auto 100px auto;
+        }
+
+        #screen-landing-inner {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #screen-vote {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            position: relative;
+        }
+
+        #show-results {
+            position: absolute;
+            border: none;
+            background: none;
+            color: #555;
+            left: 50%;
+            transform: translateY(-50%);
+            bottom: calc(100px - 3vw);
+            /*right: 16px;*/
+        }
+
+        #show-results svg {
+            fill: #555;
+            width: 3vw;
+        }
+
+        #show-results:hover {
+            cursor: pointer;
+            color: #fff;
+        }
+
+        #screen-result {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-role {
+            background: transparent;
+            border: none;
+            color: #fff;
+            opacity: 0.3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            margin: 0 32px;
+        }
+
+        .btn-role:hover {
+            opacity: 1;
+            cursor: pointer;
+            text-shadow: var(--hover-num-text-shadow);
+        }
+
+        .btn-role:hover #button-role-triangle {
+            box-shadow: var(--hover-num-text-shadow);
+        }
+
+        #button-role-triangle {
+            fill: transparent;
+            stroke: white;
+            stroke-width: 10;
+        }
+
+        #role-buttons {
+            display: flex;
+        }
+
+        #result-list-wrapper {
+            width: 100%;
+            padding: 100px;
+            flex-grow: 1;
+        }
+
+        #result-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-basis: 65px;
+            flex-grow: 0;
+            flex-shrink: 0;
+            padding: 0 100px;
+            margin-bottom: 100px;
+        }
+
+        #result-list {
+            display: flex;
+            margin: -2.5vh -32px;
+            flex-wrap: wrap;
+            list-style: none;
+            justify-content: space-around;
+            padding: 0;
+        }
+
+        #result-list li.is--active {
+            transition: text-shadow .2s ease;
+            animation: numTextShadow 1.3s ease .2s infinite;
+            /*text-shadow: var(--num-text-shadow);*/
+        }
+
+        #result-list .result-num {
+            font-size: min(var(--num-font-size), 100px);
+        }
+
+        #result-list .result-name {
+            font-size: min(2vw, 38px);
+        }
+
+        .result-list-item {
+            color: #4C4C4C;
+            margin: 2.5vh 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-basis: calc(20% - 64px);
+            flex-grow: 1;
+            flex-shrink: 0;
+        }
+
+        .result-list-item.has-voted {
+            color: white;
+        }
+
+        .result-list-item.has-voted .result-num {
+            transition: text-shadow .2s ease, transform 1.5s ease;
+            transform: scale(1);
+            animation: numTextShadow 1.3s ease 0s infinite;
+            /*text-shadow: var(--num-text-shadow);*/
+        }
+
+        .lucky-reveal .result-list-item.has-voted .result-num {
+            transform: scale(1.2);
+            transition: text-shadow .2s ease, transform 0.4s cubic-bezier(.22,0,.05,1.34);
+            /*text-shadow: var(--num-text-shadow);*/
+        }
+
+
+        .screen-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            transition: transform .8s cubic-bezier(.23, 0, 0, 1);
+        }
+
+        .main .screen {
+            flex-basis: 100%;
+            flex-shrink: 0;
+            flex-grow: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="loading">
+<div class="main is--screen-0" id="main">
+    <div class="screen-wrapper" id="screen-wrapper">
+        <div class="screen screen-landing" id="screen-landing">
+            <div id="screen-landing-inner">
+                <div class="input-container">
+                    <input id="name-input" placeholder="Enter your name" type="text" autocomplete="false">
+                    <div id="name-input-label">NAME</div>
+                </div>
+                <div id="role-buttons">
+                    <button id="btnVoter" class="btn-role">
+					
+<svg height="160" width="160">   
+    <line x1="20" y1="20" x2="140" y2="140" stroke="white" stroke-width="10" fill="transparent" />
+ <line x1="140" y1="20" x2="20" y2="140" stroke="white" stroke-width="10" fill="transparent" />
+</svg>
+
+                        VOTER
+                    </button>
+                    <button id="btnObserver" class="btn-role">
+                        <svg height="160" width="160">
+                            <circle cx="80" cy="80" r="62.5" stroke="white" stroke-width="10" fill="transparent"/>
+                        </svg>
+                        OBSERVER
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div id="screen-vote" class="screen screen-vote">
+            <div id="vote-btn-wrapper">
+                <div id="vote-btn-list"></div>
+            </div>
+            <ul id="voter-list"></ul>
+        </div>
+        <div class="screen screen-result" id="screen-result">
+            <div id="result-list-wrapper">
+                <ul id="result-list"></ul>
+            </div>
+            <div class="result-controls" id="result-controls">
+                <button class="icon-btn" id="btn-bet">
+                    <svg viewBox="0 0 55 55">
+                        <path d="M25.514,51.678l23.917,-13.809c2.934,-1.693 3.94,-5.45 2.247,-8.383c-0,-0 -13.809,-23.917 -13.809,-23.917c-1.693,-2.934 -5.45,-3.94 -8.383,-2.247c-0,0 -23.917,13.809 -23.917,13.809c-2.934,1.693 -3.94,5.45 -2.247,8.383l13.809,23.917c1.693,2.934 5.45,3.94 8.383,2.247Zm22.894,-15.58l-23.917,13.808c-1.955,1.129 -4.459,0.458 -5.589,-1.498c0,0 -13.808,-23.917 -13.808,-23.917c-1.129,-1.955 -0.458,-4.459 1.498,-5.589l23.917,-13.808c1.955,-1.129 4.459,-0.458 5.589,1.498c-0,-0 13.808,23.917 13.808,23.917c1.129,1.955 0.458,4.459 -1.498,5.589Zm-14.694,-23.406c0.847,1.467 0.344,3.345 -1.123,4.192c-1.467,0.846 -3.345,0.343 -4.192,-1.124c-0.847,-1.466 -0.343,-3.345 1.123,-4.191c1.467,-0.847 3.345,-0.344 4.192,1.123Zm9.717,16.83c0.847,1.467 0.344,3.345 -1.123,4.192c-1.467,0.847 -3.345,0.344 -4.192,-1.123c-0.847,-1.467 -0.343,-3.345 1.123,-4.192c1.467,-0.847 3.345,-0.343 4.192,1.123Zm-17.716,10.229c0.847,1.467 0.344,3.345 -1.123,4.192c-1.467,0.846 -3.345,0.343 -4.192,-1.124c-0.847,-1.466 -0.343,-3.344 1.123,-4.191c1.467,-0.847 3.345,-0.344 4.192,1.123Zm-9.717,-16.831c0.847,1.467 0.343,3.345 -1.123,4.192c-1.467,0.847 -3.345,0.344 -4.192,-1.123c-0.847,-1.467 -0.343,-3.345 1.123,-4.192c1.467,-0.847 3.345,-0.343 4.192,1.123Zm13.972,3.744c0.847,1.467 0.344,3.345 -1.123,4.192c-1.467,0.847 -3.345,0.344 -4.192,-1.123c-0.846,-1.467 -0.343,-3.345 1.124,-4.192c1.466,-0.847 3.344,-0.343 4.191,1.123Z"/>
+                    </svg>
+                    <span>PLAY</span>
+                </button>
+                <button class="icon-btn" id="btnClear">
+                    <svg viewBox="0 0 55 55">
+                        <path d="m27.5 25.085-16.904-16.904-2.4149 2.4149 16.904 16.904-16.904 16.904 2.4149 2.4149 16.904-16.904 16.904 16.904 2.4149-2.4149-16.904-16.904 16.904-16.904-2.4149-2.4149z"/>
+                    </svg>
+                    <span>CLEAR</span>
+                </button>
+                <button class="icon-btn" id="btnReveal">
+                    <svg viewBox="0 0 55 55">
+                        <path d="m27.5 15.205c-2.373 0-4.6688 0.36284-6.8438 0.96484-0.144 0.039-0.28669 0.081047-0.42969 0.12305-10.259 3.006-17.727 11.207-17.727 11.207s11.193 12.295 25 12.295 25-12.295 25-12.295-7.4676-8.201-17.727-11.207c-2.302-0.674-4.7434-1.0879-7.2734-1.0879zm0 2.459c2.074 0 4.1001 0.30998 6.0391 0.83398 1.585 1.561 2.5684 3.7328 2.5684 6.1328 0 4.753-3.8544 8.6074-8.6074 8.6074s-8.6074-3.8544-8.6074-8.6074c0-2.4 0.98336-4.5718 2.5684-6.1328 1.939-0.524 3.9651-0.83398 6.0391-0.83398zm-10.004 2.2285c-0.681 1.436-1.0625 3.0433-1.0625 4.7383 0 6.111 4.9554 11.066 11.066 11.066s11.066-4.9554 11.066-11.066c0-1.695-0.3815-3.3023-1.0625-4.7383 2.308 0.996 4.432 2.2301 6.293 3.4941 2.145 1.458 3.883 2.9168 5.082 4.0098 0.038 0.034 0.076281 0.069516 0.11328 0.10352-0.037 0.034-0.075282 0.069516-0.11328 0.10352-1.199 1.093-2.937 2.5518-5.082 4.0098-4.336 2.945-10.097 5.7227-16.297 5.7227-6.2 0-11.961-2.7777-16.297-5.7227-2.145-1.458-3.883-2.9168-5.082-4.0098-0.038-0.034-0.076281-0.069516-0.11328-0.10352 0.037-0.034 0.075281-0.069516 0.11328-0.10352 1.199-1.093 2.937-2.5518 5.082-4.0098 1.861-1.264 3.985-2.4981 6.293-3.4941z"/>
+                    </svg>
+                    <span>REVEAL</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    'use strict';
+
+    (function () {
+
+        const VERSION = '1.3'
+        console.log('%c\nScrum Poker Pro™ - v%s\n ', 'color:#0085FF;font:bold 200% helvetica,sans-serif', VERSION)
+        console.log('%c\n- Added animation for vote unity \n- Bugfixes: Auto-reveal\n', 'color:#0085FF;font:bold 120% helvetica,sans-serif')
+
+        const $ = document.querySelector.bind(document),
+            $$ = document.querySelectorAll.bind(document),
+            _ = document.getElementById.bind(document),
+            makeHash = (hashLength = 42) => {
+                const u8 = new Uint8Array(hashLength)
+                window.crypto.getRandomValues(u8)
+                return BigInt('0x' + [...u8.values()]
+                    .map(x => x.toString(16).padStart(2, '0')).join(''))
+                    .toString(36).substr(0, hashLength)
+            },
+            me = {
+                id: null,
+                name: '',
+                vote: null,
+                isVoter: false
+            },
+            userList = [],
+            VOTE_VALUES = ['0', '½', '1', '2', '3', '5', '8', '13', '20', '40', '100', '?'],
+            KEY_ROOM = 'roomname',
+            KEY_USER = 'username',
+            EVT_VOTE = 'VOTE',
+            EVT_REVEAL = 'REVEAL',
+            EVT_CLEAR = 'CLEAR',
+            el = {
+                $main: _('main'),
+                $screenWrapper: _('screen-wrapper')
+            }
+
+        let drone = null
+        let room = null
+
+        const $body = $('body');
+        $body.classList.remove('loading');
+
+        // manage channel hash
+
+        let roomName = localStorage.getItem(KEY_ROOM) || makeHash()
+        if (43 === location.hash.length) {
+            roomName = location.hash.substr(1)
+        } else {
+            location.hash = roomName
+        }
+        localStorage.setItem(KEY_ROOM, roomName)
+        console.debug('ROOM', roomName)
+
+        // username input
+
+        const updateUsername = name => {
+            console.debug('U', name)
+            me.name = name.trim().substring(0, 30) || ''
+            localStorage.setItem(KEY_USER, me.name)
+            _('screen-landing').classList.toggle('has-valid-name', me.name !== '')
+            _('btnVoter').disabled = _('btnObserver').disabled = me.name === ''
+            return me.name
+        }
+
+        _('name-input').oninput = _('name-input').onchange = e => updateUsername(e.currentTarget.value)
+        _('name-input').value = updateUsername(localStorage.getItem(KEY_USER) || '')
+
+        // role buttons
+
+        _('btnVoter').onclick = _('btnObserver').onclick = e => {
+            me.isVoter = e.currentTarget.id === 'btnVoter'
+            initDrone()
+            if (!me.isVoter) {
+                _('main').classList.add('is--observer')
+                goToScreen(1)
+                return
+            }
+            _('main').classList.remove('is--observer')
+            goToScreen(1)
+        }
+        _('btn-bet').onclick = e => {
+            goToScreen(1)
+        }
+
+        const goToScreen = index => {
+            el.$screenWrapper.style.transform = `translate3d(${-index * 100}%, 0, 0`
+        }
+
+        const send = (evt, msg = null) => drone.publish({room: room.name, message: {evt, msg}})
+
+
+        const voteButtonClicked = e => {
+            const clickedIndex = Array.prototype.indexOf.call(_('vote-btn-list').children, e.currentTarget)
+
+            me.vote = VOTE_VALUES[clickedIndex]
+
+            send(EVT_VOTE, null)
+
+            // check if I am the last voter
+            // if (userList.filter(u => u.isVoter && u.id !== me.id).some(u => (u.vote || null) === null)) {
+            //     send(EVT_VOTE, null)
+            // } else {
+            //     send(EVT_REVEAL)
+            //     send(EVT_VOTE, me.vote) //@Stefan da unnötig da schon im case EVT_REVEAL?? Siehe 630?
+            // }
+
+            updateAll()
+            setTimeout(() => {
+                goToScreen(2)
+            }, 250)
+        }
+
+        const updateVoteButtons = () => {
+            const listCreated = !!_('vote-btn-list').childNodes.length
+            VOTE_VALUES.forEach(text => {
+                let btn = null
+                if (listCreated) {
+                    btn = _(`vote-btn-${text}`)
+                    btn.classList.toggle('is--active', text === me.vote)
+                    return
+                }
+                btn = document.createElement('button')
+                btn.dataset['label'] = text
+                btn.id = 'vote-btn-' + text
+                btn.classList.toggle('is--active', text === me.vote)
+                btn.appendChild(document.createTextNode(text))
+                btn.onclick = voteButtonClicked
+                _('vote-btn-list').appendChild(btn)
+            })
+        }
+        updateVoteButtons()
+
+        // voter list
+
+        const updateVoterList = () => {
+            console.log('updateVoterList', userList)
+            const fragVoter = document.createDocumentFragment()
+            userList.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1).forEach(u => {
+                if (!u.isVoter) return
+
+                let voterItem = document.createElement('li')
+                voterItem.classList.add('voter-list-item')
+                voterItem.appendChild(document.createTextNode(u.name))
+                voterItem.classList.toggle('has-voted', !!u.vote)
+                fragVoter.appendChild(voterItem)
+            })
+            _('voter-list').replaceChildren(fragVoter)
+        }
+
+        updateVoterList()
+
+
+        const luckyRevealAnim = () => {
+            const $body = document.querySelector('body');
+            $body.style.background = '#fff';
+            $body.style.transitionDuration = '0.1s';
+            setTimeout(() => {
+                $body.style.transitionDuration = '1.5s';
+                $body.style.removeProperty('background');
+                setTimeout(() => {
+                    $body.classList.add('lucky-reveal');
+                    setTimeout(() => {
+                        $body.classList.remove('lucky-reveal')
+                    }, 1000);
+                })
+            }, 100);
+        }
+
+        const updateResultsList = () => {
+            const $resultList = _('result-list')
+            const frag = new DocumentFragment()
+            const temp = document.createElement('template')
+            userList
+                // filter only voters
+                .filter(u => u.isVoter)
+                // map needed data
+                .map(u => ({
+                    id: u.id,
+                    name: u.name,
+                    value: u.vote && u.vote !== true && VOTE_VALUES.includes(u.vote) ? u.vote : '?',
+                    voted: u.vote
+                }))
+                // sort by value
+                .sort((a, b) => VOTE_VALUES.indexOf(a.value) - VOTE_VALUES.indexOf(b.value))
+                // fill template
+                .forEach(u => {
+                    temp.innerHTML = `<li class="result-list-item ${u.voted ? 'has-voted' : ''}" data-id="${u.id}"><div class="result-num">${u.value}</div><div class="result-name"></div></li>`
+                    // add name for security reason as text node
+                    temp.content.querySelector('.result-name').innerText = u.name
+                    frag.appendChild(temp.content)
+                })
+            console.log('userlist', userList);
+            const firstVote = userList.length ? userList[0].vote : undefined //Just to have one of the values to make checks on it
+            if (userList.length > 1 &&
+                userList.filter(u => u.isVoter).every(user => user.vote === firstVote && firstVote)) {
+                luckyRevealAnim();
+                // luckyRevealAnim2();
+            }
+
+            $resultList.replaceChildren(frag)
+        }
+
+        updateResultsList()
+
+        const updateAll = () => {
+            updateVoterList()
+            updateVoteButtons()
+            updateResultsList()
+        }
+
+        const initDrone = () => {
+            drone = new ScaleDrone('XBNp4qa4ChWO1WXg', {data: {name: me.name, isVoter: me.isVoter}})
+            room = drone.subscribe('observable-' + roomName)
+            console.debug('INIT', drone, room)
+
+            room.on('members', members => {
+                console.debug('members', members)
+                me.id = drone.clientId
+                userList.push(me)
+                members.forEach(m => {
+                    if (m.id === me.id) return
+                    userList.push({
+                        id: m.id,
+                        name: m.clientData.name,
+                        isVoter: m.clientData.isVoter
+                    })
+                })
+                updateAll()
+                // updateVoterList()
+            })
+
+            room.on('member_join', m => {
+                console.debug('member_join', m)
+                userList.push({
+                    id: m.id,
+                    name: m.clientData.name,
+                    isVoter: m.clientData.isVoter
+                })
+                updateVoterList()
+                updateResultsList()
+                if (me.vote) send(EVT_VOTE)
+            })
+
+            room.on('member_leave', m => {
+                console.debug('member_leave', m)
+                const idx = userList.findIndex(ulm => ulm.id === m.id)
+                if (idx < 0) return
+                userList.splice(idx, 1)
+                updateVoterList()
+                updateResultsList()
+            })
+
+            room.on('message', msg => {
+                if (msg.clientId === me.id || !msg.data.evt) return
+                console.log('MSG', msg.clientId, msg.data)
+                switch (msg.data.evt) {
+                    case EVT_VOTE:
+                        (userList.find(u => u.id === msg.clientId) || {}).vote = msg.data.msg || true
+                        updateAll()
+                        break
+                    case EVT_REVEAL:
+                        send(EVT_VOTE, me.vote)
+                        break
+                    case EVT_CLEAR:
+                        userList.forEach(u => u.vote = null)
+                        updateAll()
+                        break
+                }
+            })
+        }
+
+        // vote buttons
+
+        // result page
+        _('btnClear').onclick = () => {
+            send(EVT_CLEAR)
+            userList.forEach(u => u.vote = null)
+            updateAll()
+        }
+        _('btnReveal').onclick = () => {
+            send(EVT_REVEAL)
+            send(EVT_VOTE, me.vote)
+        }
+
+    })()
+</script>
+</body>
+</html>
